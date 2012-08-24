@@ -171,6 +171,12 @@ lychee.define('game.Main').requires([
 				true, { map: this.map }
 			);
 
+			this.renderer.setBackground("#222");
+
+
+			this.reset();
+
+
 			this.jukebox = new game.Jukebox(this);
 
 			this.input = new lychee.Input({
@@ -178,8 +184,6 @@ lychee.define('game.Main').requires([
 				fireModifiers: true
 			});
 
-
-			this.reset();
 
 			this.states = {
 				game:    new game.state.Game(this),
