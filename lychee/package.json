@@ -1,0 +1,77 @@
+{
+
+	"tags": {
+
+		"platform": {
+
+			"html": "platform/html",
+			"v8gl": "platform/v8gl",
+			"webgl": "platform/webgl"
+
+		}
+
+	},
+
+	"tree": {
+
+		"platform": {
+
+			"html": {
+
+				"ui": {
+					"Button": [ "js", "css" ],
+					"Checkbox": [ "js", "css" ],
+					"Input": [ "js", "css" ],
+					"Radios": [ "js", "css" ],
+					"Option": [ "js" ],
+					"Select": [ "js", "css" ],
+					"Textarea": [ "js" ],
+					"Lightbox": [ "js", "css" ]
+				},
+
+				"Input": [ "js" ],
+				"Jukebox": [ "js" ],
+				"Preloader": [ "js" ],
+				"Renderer": [ "js" ],
+				"Track": [ "js" ]
+
+			},
+
+			"v8gl": {
+
+				"Input": [ "js" ],
+				"Jukebox": [ "js" ],
+				"Preloader": [ "js" ],
+				"Renderer": [ "js" ],
+				"Track": [ "js" ]
+
+			},
+
+			"webgl": {
+
+			}
+
+		},
+
+		"game": {
+			"Entity": [ "js" ],
+			"Loop": [ "js" ],
+			"Main": [ "js" ],
+			"State": [ "js" ],
+			"Jukebox": [ "js" ]
+		},
+
+		"parser": {
+			"ASTCompressor": [ "js" ],
+			"ASTScope": [ "js" ],
+			"ASTWalker": [ "js" ],
+			"Tokenizer": [ "js" ],
+			"Parser": [ "js" ]
+		},
+
+		"Font": [ "js" ],
+		"Events": [ "js" ]
+
+	}
+
+}

@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Events Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+</head>
+<body>
+
+<div id="demo">
+	<p class="notification" id="demo-notification">
+		This demo shows the usage of the lychee.Events<br>
+		concept and how to manage bindings and subscriptions.
+	</p>
+
+	<ul id="demo-log"></ul>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Events').requires([
+	'demo.Main',
+	'lychee.Events'
+]).exports(function(lychee, global) {
+
+
+	/*
+	 * Example Classes
+	 */
+	var Child = function(id) {
+		this.id = id;
+		lychee.Events.call(this, 'child');
+	};
+
+	lychee.extend(Child.prototype, lychee.Events.prototype, {
+		destroy: function() {
+			this.trigger('destroy', [ this.id + ' destroyed' ]);
+		},
+		toString: function() {
+			return '[Child #' + this.id + ']';
+		}
+	});
+
+
+	var Parent = function() {
+		this.id = 1;
+		lychee.Events.call(this, 'parent');
+	};
+
+	lychee.extend(Parent.prototype, lychee.Events.prototype, {
+		toString: function() {
+			return '[Parent #' + this.id + ']';
+		}
+	});
+
+
+
+	/*
+	 * Usage
+	 */
+	var child1 = new Child(1);
+	var child2 = new Child(2);
+	var parent = new Parent();
+
+
+	child1.subscribe(parent, 'parent');
+	child2.subscribe(parent, 'parent');
+
+
+
+	/*
+	 * Event Bindings
+	 *
+	 * A leading hash (#) will include the bound instance itself
+	 * in the arguments, so in this case, the first argument is
+	 * the parent itself.
+	 */
+	parent.bind('#child.destroy', function(parent, child, message) {
+		demo.Main.log('Subscription arrived from ' + child.toString() + ' to ' + parent.toString() + ': ' + message);
+	}, this);
+
+
+	setTimeout(function() {
+		child1.destroy();
+	}, 1000);
+
+	setTimeout(function() {
+		child2.destroy();
+	}, 2000);
+
+
+	return null;
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   

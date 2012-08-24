@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Jukebox Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+</head>
+<body>
+
+<div id="demo">
+	<p class="notification" id="demo-notification">
+		Always remember to offer multiple formats.<br>
+		My recommendation for real cross-platform usage: [ ogg, mp3, gsm, amr ]
+	</p>
+
+	<div id="demo-touchareas" class="center">
+		<div id="demo-toucharea1">Play Effect</div>
+		<div id="demo-toucharea2">Play Bolt</div>
+		<div id="demo-toucharea3">Play Random</div>
+		<div id="demo-toucharea4">Play Effect (Looping)</div>
+		<div id="demo-toucharea5">Mute / Unmute Effect</div>
+		<div id="demo-toucharea6">Toggle Music</div>
+	</div>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Jukebox').requires([
+	'demo.Main',
+	'lychee.Input',
+	'lychee.Jukebox'
+]).exports(function(lychee, global) {
+
+	var _elements = {
+		toucharea1: document.getElementById('demo-toucharea1'),
+		toucharea2: document.getElementById('demo-toucharea2'),
+		toucharea3: document.getElementById('demo-toucharea3'),
+		toucharea4: document.getElementById('demo-toucharea4'),
+		toucharea5: document.getElementById('demo-toucharea5'),
+		toucharea6: document.getElementById('demo-toucharea6')
+	};
+
+	var _random = [ 'bolt', 'effect', 'music' ];
+
+
+
+	/*
+	 * Setup Jukebox and its Tracks
+	 */
+	var jukebox = new lychee.Jukebox(20);
+
+
+	var track;
+	var prefix = "../../asset/snd";
+
+
+	track = new lychee.Track('bolt', {
+		base: prefix + '/bolt',
+		formats: [ 'ogg', 'mp3', 'gsm', 'amr' ]
+	});
+	jukebox.add(track);
+
+	track = new lychee.Track('effect', {
+		base: prefix + '/effect',
+		formats: [ 'ogg', 'mp3', 'gsm', 'amr' ]
+	});
+	jukebox.add(track);
+
+	track = new lychee.Track('music', {
+		base: prefix + '/music',
+		formats: [ 'ogg', 'mp3', 'gsm', 'amr' ]
+	});
+	jukebox.add(track);
+
+
+
+	/*
+	 * User Interaction / Event Bindings
+	 */
+	var input = new lychee.Input({
+		delay: 0,
+		fireModifier: false,
+		fireSwipe: false
+	});
+
+
+	input.bind('toucharea-demo1', function() {
+		jukebox.play('effect');
+	}, this);
+
+	input.bind('toucharea-demo2', function() {
+		jukebox.play('bolt');
+	}, this);
+
+	input.bind('toucharea-demo3', function() {
+		var effect = _random[Math.round(Math.random() * (_random.length - 1))];
+		jukebox.play(effect);
+	}, this);
+
+	input.bind('toucharea-demo4', function() {
+		jukebox.play('effect', true);
+	}, this);
+
+	input.bind('toucharea-demo5', function() {
+
+		if (jukebox.isMuted('effect')) {
+			jukebox.unmute('effect');
+		} else {
+			jukebox.mute('effect');
+		}
+
+	}, this);
+
+	input.bind('toucharea-demo6', function() {
+		jukebox.toggle('music', true);
+	}, this);
+
+
+	input.addToucharea('demo1', {
+		element: _elements.toucharea1
+	});
+
+	input.addToucharea('demo2', {
+		element: _elements.toucharea2
+	});
+
+	input.addToucharea('demo3', {
+		element: _elements.toucharea3
+	});
+
+	input.addToucharea('demo4', {
+		element: _elements.toucharea4
+	});
+
+	input.addToucharea('demo5', {
+		element: _elements.toucharea5
+	});
+
+	input.addToucharea('demo6', {
+		element: _elements.toucharea6
+	});
+
+
+	return null;
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+lychee.build();
+</script>
+</body>
+</html>   

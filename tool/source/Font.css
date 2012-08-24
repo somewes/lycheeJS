@@ -1,0 +1,23 @@
+
+body {
+	overflow: hidden;
+}
+
+#demo-navi {
+	padding: 1em;
+}
+
+#demo-lightbox textarea {
+	display: block;
+	width: 100%;
+	min-height: 16em;
+}
+
+#demo-lightbox-wrapper {
+	overflow: auto;
+}
+
+#demo-lightbox-wrapper img {
+	border: 2px solid #8b2323;
+}
+

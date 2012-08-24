@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Parser Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+</head>
+<body>
+
+<div id="demo">
+	<h1>LycheeJS Parser Demo</h1>
+	<p class="notification">
+		Unfocus the left textarea to refresh the <abbr title="Abstract Syntax Tree">AST</abbr>.
+	</p>
+	<div id="demo-navi"></div>
+	<div id="demo-main"></div>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Init').requires([
+	'demo.Parser'
+]).exports(function(lychee, global) {
+
+	new demo.Parser({
+		code: '// Welcome to this test!\n\n(function(lychee, global) {\n\n\tvar x, y = \'dumdidum\', z = 3;\n\n\tdemo(\'tokenizing\', null);\n\tbitwiseoperators(16 >> 2 << 3 >>> 3);\n\tvar test = new lychee.Test(null);\n\n})(this.lychee, this);',
+		exigent: false
+	});
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   

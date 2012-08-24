@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Input Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+	<style>
+		#demo-touchareas {
+			position: absolute;
+			top: 20%;
+			right: 0px;
+			bottom: 20%;
+			left: 0px;
+		}
+	</style>
+
+</head>
+<body>
+
+<div id="demo">
+	<p class="notification">
+		This is the event list fired by the lychee.Input instance (newest top):
+	</p>
+
+	<ul id="demo-log"></ul>
+
+	<div id="demo-touchareas" class="center">
+		<div id="demo-toucharea1">toucharea1</div>
+		<div id="demo-toucharea2">toucharea2</div>
+	</div>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Input').requires([
+	'demo.Main',
+	'lychee.Input'
+]).exports(function(lychee, global) {
+
+	var _elements = {
+		toucharea1: document.getElementById('demo-toucharea1'),
+		toucharea2: document.getElementById('demo-toucharea2')
+	};
+
+	var input = new lychee.Input({
+		delay: 0,
+		fireSwipe: false,
+		fireModifier: false
+	});
+
+
+
+	/*
+	 * Key Bindings
+	 */
+	input.bind('key', function(key, delta) {
+		demo.Main.log('[' + key + '] , Delta: ' + delta + 'ms');
+	}, this);
+
+	input.bind('ctrl-a', function(key, delta) {
+		demo.Main.log('[Ctrl] + [A] , Delta: ' + delta + 'ms');
+	}, this);
+
+
+
+	/*
+	 * Touch Bindings
+	 */
+	input.bind('touch', function(position, delta) {
+		demo.Main.log('Touch @ {x: ' + position.x + ', y: ' + position.y + '}, Delta: ' + delta + 'ms');
+	}, this);
+
+
+
+	/*
+	 * Toucharea Functionality
+	 */
+	input.bind('toucharea-demo1', function(delta) {
+		demo.Main.log('Touch @ #demo1, Delta: ' + delta + 'ms');
+	}, this);
+
+	input.bind('toucharea-demo2', function(delta) {
+		demo.Main.log('Touch @ #demo2, Delta: ' + delta + 'ms');
+	}, this);
+
+
+	input.addToucharea('demo1', {
+		element: _elements.toucharea1
+	});
+
+	input.addToucharea('demo2', {
+		element: _elements.toucharea2
+	});
+
+
+	return null;
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   

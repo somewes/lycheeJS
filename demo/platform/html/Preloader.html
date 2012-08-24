@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Preloader Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+</head>
+<body>
+
+<div id="demo">
+	<p class="notification" id="demo-notification">
+		Take a look at the Web Console!
+	</p>
+
+	<ul id="demo-log"></ul>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Preloader').requires([
+	'demo.Main'
+]).exports(function(lychee, global) {
+
+	var urls = [
+		"../../asset/img/background.png"
+	];
+
+
+	// Initialize and start loading given files
+	var preloader = new lychee.Preloader(urls, {
+		timeout: 1000
+	});
+
+
+	// Load a single files
+	preloader.load("../../asset/json/demo-spritemap.json");
+
+	preloader.bind('ready', function(assets) {
+		console.log('ready: ', assets);
+	}, this);
+
+
+	// Load unexisting files
+	preloader.load([ 'not/here.png', 'not/there.jpeg' ]);
+
+	preloader.bind('error', function(assets) {
+		console.warn('error: ', assets);
+	}, this);
+
+
+	setTimeout(function() {
+
+		// Now do something with the asset directly
+		var image = preloader.get(urls[0]);
+		document.body.appendChild(image.cloneNode(true));
+
+	}, 5000);
+
+
+	return null;
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   

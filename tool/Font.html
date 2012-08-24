@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Font Tool</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../lychee/core.js"></script>
+	<script src="../lychee/Builder.js"></script>
+	<script src="../lychee/platform/html/Preloader.js"></script>
+
+	<style>
+		#demo-main  > img {
+			background: grey;
+		}
+	</style>
+
+</head>
+<body>
+
+<div id="demo">
+	<h1>LycheeJS Font Export Tool</h1>
+	<p class="notification">
+		Use this tool to export locally (OS- and Web-) installed
+		fonts for usage with the lycheeJS framework.
+	</p>
+	<div id="demo-navi"></div>
+	<div id="demo-main"></div>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../demo/source",
+	lychee: "../lychee",
+	tool: "./source"
+});
+
+
+lychee.define('tool.Main').requires([
+	'tool.Font'
+]).exports(function(lychee, global) {
+
+	new tool.Font({
+		font: 'Candy Script',
+		size: 64,
+		spacing: 20,
+		outline: 3,
+		color: '#fff',
+
+		spritemap: 'xy',
+
+		backend: './source/Font.php'
+
+	});
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   

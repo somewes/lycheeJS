@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+	<title>LycheeJS Font Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- libraries -->
+	<script src="../../../lychee/core.js"></script>
+	<script src="../../../lychee/Builder.js"></script>
+	<script src="../../../lychee/platform/html/Preloader.js"></script>
+
+	<style>
+		#demo-canvas {
+			background: grey;
+		}
+	</style>
+
+</head>
+<body>
+
+<div id="demo">
+	<p class="notification">
+		This is a quick font rendering demo for debugging purposes.<br>
+		The upper line shows a horizontal spritemap, the lower one uses a quadratic spritemap.
+	</p>
+	<div id="demo-navi"></div>
+	<div id="demo-main" class="center"></div>
+</div>
+
+<script>
+lychee.rebase({
+	demo: "../../source",
+	lychee: "../../../lychee"
+});
+
+
+lychee.define('demo.Font').requires([
+	'demo.Main',
+	'lychee.Font',
+	'lychee.Renderer',
+	'lychee.ui.Checkbox',
+	'lychee.ui.Input'
+]).exports(function(lychee, global) {
+
+	var label = null;
+	var _fonts = {};
+
+	var width = Math.min(global.innerWidth / 100 * 90);
+	var height = 200;
+
+	var urls = [
+		'../../asset/img/font-candy-64-x.png',
+		'../../asset/json/font-candy-64-x.json',
+		'../../asset/img/font-candy-64-xy.png',
+		'../../asset/json/font-candy-64-xy.json'
+	];
+
+
+	var preloader = new lychee.Preloader(urls);
+	preloader.bind('ready', function(assets) {
+
+		_fonts.x = new lychee.Font(assets[urls[0]], assets[urls[1]]);
+		_fonts.xy = new lychee.Font(assets[urls[2]], assets[urls[3]]);
+
+		_refresh('Hello World!');
+
+	}, this);
+
+
+	var renderer = new lychee.Renderer();
+	renderer.reset(width, height);
+	renderer.context.id = 'demo-canvas';
+	demo.Main.get('main').add(renderer.context);
+
+
+	var input = new lychee.ui.Input('text', 'Hello World!', function(value) {
+		_refresh(value);
+	}, this);
+	demo.Main.get('navi').add('Enter a text', input);
+
+	demo.Main.get('navi').add('Kerning', new lychee.ui.Input('number', 0, function(value) {
+		_fonts.x.settings.kerning = value;
+		_fonts.xy.settings.kerning = value;
+		_refresh(input.get());
+	}, this));
+
+	demo.Main.get('navi').add('Baseline', new lychee.ui.Input('number', 6, function(value) {
+		_fonts.x.settings.baseline = value;
+		_fonts.xy.settings.baseline = value;
+		_refresh(input.get());
+	}, this));
+
+	demo.Main.get('navi').add('Debug Mode', new lychee.ui.Checkbox(false, function(state) {
+		lychee.debug = state;
+		_refresh(input.get());
+	}, this));
+
+
+	var _refresh = function(text) {
+
+	renderer.start();
+
+		renderer.clear();
+
+		renderer.drawText(
+			text,
+			'center',
+			0,
+			_fonts.x
+		);
+
+		renderer.drawText(
+			text,
+			'center',
+			100,
+			_fonts.xy
+		);
+
+	};
+
+
+	return null;
+
+});
+
+
+lychee.tag({
+	platform: [ 'html' ]
+});
+
+
+lychee.build();
+</script>
+</body>
+</html>   
