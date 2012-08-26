@@ -6,6 +6,8 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		this.settings = lychee.extend({}, this.defaults, settings);
 
 		this.__clock = null;
+
+		this.__collision = null;
 		this.__shape = null;
 
 		this.__animation = null;
@@ -13,12 +15,13 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		this.__state = 'default';
 		this.__tween = null;
 
+
 		this.__position = {
 			x: 0, y: 0, z: 0
 		};
 
-
 		this.setPosition(this.settings.position);
+		this.setCollisionType(this.settings.collision);
 		this.setShape(this.settings.shape);
 		this.setState(this.settings.state);
 
@@ -75,9 +78,9 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 
 	Class.SHAPE = {
-		circle:  0,
-		box:     1,
-		polygon: 2
+		circle:    0,
+		rectangle: 1,
+		polygon:   2
 	};
 
 
@@ -254,6 +257,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 
 			var t = 0;
+			var dt = delta / 1000;
 
 			if (this.__tween !== null && (this.__clock <= this.__tween.start + this.__tween.duration)) {
 
@@ -423,20 +427,113 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			return this.__state;
 		},
 
+		collidesWith: function(entity) {
+
+			if (
+				this.getCollisionType() === Class.COLLISION.none
+				|| entity.getCollisionType() === Class.COLLISION.none
+			) {
+				return false;
+			}
+
+
+			var shapeA = this.getShape();
+			var shapeB = entity.getShape();
+			var posA = this.getPosition();
+			var posB = entity.getPosition();
+
+
+			if (
+				shapeA === Class.SHAPE.circle
+				&& shapeB === Class.SHAPE.circle
+			) {
+
+				var collisionDistance = this.settings.radius + entity.settings.radius;
+				var realDistance = Math.sqrt(
+					Math.pow(posB.x - posA.x, 2) + Math.pow(posB.y - posA.y, 2)
+				);
+
+
+				if (realDistance <= collisionDistance) {
+					return true;
+				}
+
+			} else if (
+				shapeA === Class.SHAPE.circle
+				&& shapeB === Class.SHAPE.rectangle
+			) {
+
+				var radius = this.settings.radius;
+				var halfWidth = entity.settings.width / 2;
+				var halfHeight = entity.settings.height / 2;
+
+				if (
+					(posA.x + radius > posB.x - halfWidth)
+					&& (posA.x - radius < posB.x + halfWidth)
+					&& (posA.y + radius > posB.y - halfHeight)
+					&& (posA.y - radius < posB.y + halfHeight)
+				) {
+					return true;
+				}
+
+			}
+
+
+			return false;
+
+		},
+
+		getCollisionType: function() {
+			return this.__collision;
+		},
+
+		setCollisionType: function(type) {
+
+			var found = false;
+
+			for (var id in Class.COLLISION) {
+
+				if (type === Class.COLLISION[id]) {
+					found = true;
+					break;
+				}
+
+			}
+
+
+			if (found === true) {
+				this.__collision = type;
+			}
+
+
+			return found;
+
+		},
+
 		getShape: function() {
 			return this.__shape;
 		},
 
 		setShape: function(shape) {
 
-			// FIXME: Somehow validate ENUM
-			if (shape !== undefined) {
-				this.__shape = shape;
-				return true;
+			var found = false;
+
+			for (var id in Class.SHAPE) {
+
+				if (shape === Class.SHAPE[id]) {
+					found = true;
+					break;
+				}
+
 			}
 
 
-			return false;
+			if (found === true) {
+				this.__shape = shape;
+			}
+
+
+			return found;
 
 		},
 
