@@ -9,21 +9,38 @@ lychee.define('lychee.physics.Particle').requires([
 
 		var settings = lychee.extend({}, this.defaults, data);
 
-		this.__damping = settings.damping || 1;
 		this.__invertedMass = null;
 
 
-		this.setPropertyVector('position',     settings.position);
-		this.setPropertyVector('acceleration', settings.acceleration);
-		this.setPropertyVector('velocity',     settings.velocity);
-		this.setPropertyVector('force',        settings.force);
+		this.setPosition(settings.position);
+		this.setAcceleration(settings.acceleration);
+		this.setVelocity(settings.velocity);
+		this.setForce(settings.force);
 
+		this.setDamping(settings.damping);
 		this.setMass(settings.mass);
 
 	};
 
 
 	Class.prototype = {
+
+		defaults: {
+			damping: 0,
+
+			position: {
+				x: 0, y: 0, z: 0
+			},
+			acceleration: {
+				x: 0, y: 0, z: 0
+			},
+			force: {
+				x: 0, y: 0, z: 0
+			},
+			velocity: {
+				x: 0, y: 0, z: 0
+			}
+		},
 
 		update: function(clock, delta) {
 
@@ -42,7 +59,7 @@ lychee.define('lychee.physics.Particle').requires([
 				this.velocity.z += (this.acceleration.z + this.force.z * this.__inverseMass) * dt;
 
 
-				var damping = Math.pow(this.__damping, dt);
+				var damping = Math.pow(this.damping, dt);
 
 				this.velocity.x *= damping;
 				this.velocity.y *= damping;
@@ -55,21 +72,26 @@ lychee.define('lychee.physics.Particle').requires([
 
 		},
 
-		defaults: {
-			damping: 0,
+		getAcceleration: function() {
+			return this.acceleration;
+		},
 
-			position: {
-				x: 0, y: 0, z: 0
-			},
-			acceleration: {
-				x: 0, y: 0, z: 0
-			},
-			force: {
-				x: 0, y: 0, z: 0
-			},
-			velocity: {
-				x: 0, y: 0, z: 0
-			}
+		setAcceleration: function(acceleration) {
+			return this.__setPropertyVector('acceleration', acceleration);
+		},
+
+		getDamping: function() {
+			return this.damping;
+		},
+
+		setDamping: function(damping) {
+
+			damping = typeof damping === 'number' ? damping : 1;
+
+			this.damping = damping;
+
+			return true;
+
 		},
 
 		getMass: function() {
@@ -90,7 +112,23 @@ lychee.define('lychee.physics.Particle').requires([
 
 		},
 
-		setPropertyVector(property, data) {
+		getPosition: function() {
+			return this.position;
+		},
+
+		setPosition: function(position) {
+			return this.__setPropertyVector('position', position);
+		},
+
+		getVelocity: function() {
+			return this.velocity;
+		},
+
+		setVelocity: function(velocity) {
+			return this.__setPropertyVector('velocity', velocity);
+		},
+
+		__setPropertyVector(property, data) {
 
 			if (Object.prototype.toString.call(data) === '[object Object]') {
 
@@ -100,7 +138,11 @@ lychee.define('lychee.physics.Particle').requires([
 					typeof data.z === 'number' ? data.z : 0
 				);
 
+				return true;
+
 			}
+
+			return false;
 
 		}
 
