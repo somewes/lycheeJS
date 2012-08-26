@@ -1,0 +1,12 @@
+{
+	"entities": [{
+		"id": "player",
+		"entity": "Player",
+		"data": {
+			"position": {
+				"x": 13,
+				"y": 10
+			}
+		}
+	}]
+}
