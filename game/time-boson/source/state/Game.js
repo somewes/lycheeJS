@@ -62,19 +62,29 @@ lychee.define('game.state.Game').requires([
 				height: Math.floor(height / tile)
 			}, this.game);
 
-			this.__loop.timeout(1000, function() {
+			this.__world.bind('ready', function() {
+
+				this.__entities.hint.setText('Ready!');
 
 				this.__locked = false;
 
-				this.__entities.hint.setTween(500, {
-					y: 60
-				}, lychee.game.Entity.TWEEN.easeOut);
+				if (lychee.debug === true) {
+					console.log('game.World', this.__world);
+				}
 
 			}, this);
 
 
+			this.__entities.hint.setTween(500, {
+				y: 60
+			}, lychee.game.Entity.TWEEN.easeOut);
+
+
 			this.__input.bind('touch', this.__processTouch, this);
 			this.__renderer.start();
+
+
+			this.__world.load('level1');
 
 		},
 

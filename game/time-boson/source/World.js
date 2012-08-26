@@ -1,7 +1,8 @@
 
 lychee.define('game.World').requires([
-	'lychee.Events',
 	'game.entity.Player'
+]).includes([
+	'lychee.Events'
 ]).exports(function(lychee, global) {
 
 	var _game = game;
@@ -12,8 +13,6 @@ lychee.define('game.World').requires([
 		this.settings = lychee.extend({}, this.defaults, settings);
 
 		lychee.Events.call(this, 'world');
-
-		this.load(level || 'level1');
 
 	};
 
@@ -73,13 +72,13 @@ lychee.define('game.World').requires([
 			for (var e = 0, l = data.entities.length; e < l; e++) {
 
 				var raw = data.entities[e];
-				var type = data.entity || null;
-				var id = data.id || null;
+				var type = raw.entity || null;
+				var id = raw.id || null;
 
 				if (type !== null) {
 
 					var entity = new _game.entity[type](raw.data);
-					this.__entites.push(entity);
+					this.__entities.push(entity);
 
 					if (id !== null) {
 						this.__linkedEntities[id] = entity;
