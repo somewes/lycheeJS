@@ -61,6 +61,11 @@
 			"Jukebox": [ "js" ]
 		},
 
+		"physics": {
+			"Particle": [ "js" ],
+			"Vector": [ "js" ]
+		},
+
 		"parser": {
 			"ASTCompressor": [ "js" ],
 			"ASTScope": [ "js" ],
