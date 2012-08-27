@@ -53,7 +53,7 @@ lychee.define('Input').tags({
 
 		defaults: {
 			delay: 200,
-			fireModifier: false,
+			fireModifiers: false,
 			fireSwipe: false
 		},
 
@@ -290,16 +290,17 @@ lychee.define('Input').tags({
 
 		},
 
-		__processKey: function(key, ctrl, alt, shift) {
+		__processKey: function(code, ctrl, alt, shift) {
 
 			// Don't fire unknown keys
-			if (this.KEYMAP[key] === undefined) {
+			if (this.KEYMAP[code] === undefined) {
 				return;
 			}
 
-			ctrl = ctrl !== undefined ? ctrl : false;
-			alt = alt !== undefined ? alt : false;
-			shift = shift !== undefined ? shift : false;
+			ctrl = ctrl === true ? true : false;
+			alt = alt === true ? true : false;
+			shift = shift === true ? true : false;
+
 
 			var delta = Date.now() - this.__last.key;
 			if (delta < this.settings.delay) {
@@ -307,31 +308,45 @@ lychee.define('Input').tags({
 			}
 
 			if (
-				this.settings.fireModifier === false
-				&& (key === 9 || key === 16 || key === 17 || key === 18)
+				this.settings.fireModifiers === false
+				&& (code === 9 || code === 16 || code === 17 || code === 18)
+				&& (ctrl === true || alt === true || shift === true)
 			) {
 				return;
 			}
 
 
+			var key = this.KEYMAP[code];
+
 			var name = '';
-			if (ctrl === true && this.KEYMAP[key] !== 'ctrl') {
+			if (ctrl === true && this.KEYMAP[code] !== 'ctrl') {
 				name += 'ctrl-';
 			}
 
-			if (alt === true && this.KEYMAP[key] !== 'alt') {
+			if (alt === true && this.KEYMAP[code] !== 'alt') {
 				name += 'alt-';
 			}
 
-			if (shift === true && this.KEYMAP[key] !== 'shift') {
+			if (shift === true && this.KEYMAP[code] !== 'shift') {
 				name += 'shift-';
+
+				// Seriously, WTF is this shit?
+				// t > T, but 0 > ! doesn't work.
+				key = String.fromCharCode(code);
+
 			}
 
 
-			name += this.KEYMAP[key];
+			name += key.toLowerCase();
+
+
+			if (lychee.debug === true) {
+				console.log('lychee.Input:', key, name, delta);
+			}
+
 
 			// allow both bind('key') and bind('ctrl-a')
-			this.trigger('key', [ name, delta ]);
+			this.trigger('key', [ key, name, delta ]);
 			this.trigger(name, [ delta ]);
 
 
