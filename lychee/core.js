@@ -83,8 +83,17 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 			for (var tag in settings) {
 
-				var values = Object.prototype.toString.call(settings[tag]) === '[object Array]' ? settings[tag] : [ settings[tag] ];
-				_tags[tag] = values;
+				var values = null;
+
+				if (Object.prototype.toString.call(settings[tag]) === '[object Array]') {
+					values = settings[tag];
+				} else if (typeof settings[tag] === 'string') {
+					values = [ settings[tag] ];
+				}
+
+				if (values !== null) {
+					_tags[tag] = values;
+				}
 
 			}
 

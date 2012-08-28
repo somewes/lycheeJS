@@ -23,11 +23,84 @@ lychee.define('Input').tags({
 
 		defaults: {
 			delay: 200,
-			fireModifier: false,
+			fireModifiers: false,
 			fireSwipe: false
 		},
 
 		KEYMAP: {
+
+			 8: 'backspace',
+			 9: 'tab',
+			13: 'enter',
+			27: 'escape',
+			32: 'space',
+
+			48: '0',
+			49: '1',
+			50: '2',
+			51: '3',
+			52: '4',
+			53: '5',
+			54: '6',
+			55: '7',
+			56: '8',
+			57: '9',
+
+
+			65: 'A',
+			66: 'B',
+			67: 'C',
+			68: 'D',
+			69: 'E',
+			70: 'F',
+			71: 'G',
+			72: 'H',
+			73: 'I',
+			74: 'J',
+			75: 'K',
+			76: 'L',
+			77: 'M',
+			78: 'N',
+			79: 'O',
+			80: 'P',
+			81: 'Q',
+			82: 'R',
+			83: 'S',
+			84: 'T',
+			85: 'U',
+			86: 'V',
+			87: 'W',
+			88: 'X',
+			89: 'Y',
+			90: 'Z',
+
+			97: 'a',
+			98: 'b',
+			99: 'c',
+			100: 'd',
+			101: 'e',
+			102: 'f',
+			103: 'g',
+			104: 'h',
+			105: 'i',
+			106: 'j',
+			107: 'k',
+			108: 'l',
+			109: 'm',
+			110: 'n',
+			111: 'o',
+			112: 'p',
+			113: 'q',
+			114: 'r',
+			115: 's',
+			116: 't',
+			117: 'u',
+			118: 'v',
+			119: 'w',
+			120: 'x',
+			121: 'y',
+			122: 'z'
+
 		},
 
 
@@ -40,6 +113,19 @@ lychee.define('Input').tags({
 			var that = this;
 
 			if (_alreadyBound === true) return;
+
+
+			var supportsKeyboard = 'keyboardFunc' in global.glut && 'getModifiers' in global.glut;
+			if (supportsKeyboard === true) {
+
+				glut.keyboardFunc(function(key, x, y) {
+
+					var modifiers = glut.getModifiers();
+					that.__processKey(key, modifiers);
+
+				});
+
+			}
 
 
 			var supportsMouse = 'mouseFunc' in global.glut && 'motionFunc' in global.glut;
@@ -80,7 +166,6 @@ lychee.define('Input').tags({
 			}
 
 
-			var supportsKeyboard = false;
 			var supportsTouch = false;
 			var supportsPointer = false;
 
@@ -111,6 +196,67 @@ lychee.define('Input').tags({
 				console.log(message);
 
 			}
+
+		},
+
+		__processKey: function(key, mod) {
+
+			var code = key.charCodeAt(0);
+			if (this.KEYMAP[code] === undefined) {
+				return;
+			}
+
+			if (
+				this.settings.fireModifiers === false
+				&& mod !== 0
+			) {
+				return;
+			}
+
+
+			var delta = Date.now() - this.__last.key;
+			if (delta < this.settings.delay) {
+				return;
+			}
+
+			var ctrlAltShift = glut.ACTIVE_CTRL | glut.ACTIVE_ALT | glut.ACTIVE_SHIFT;
+			var ctrlAlt      = glut.ACTIVE_CTRL | glut.ACTIVE_ALT;
+			var ctrlShift    = glut.ACTIVE_CTRL | glut.ACTIVE_SHIFT;
+			var altShift     = glut.ACTIVE_ALT | glut.ACTIVE_SHIFT;
+
+
+			// FIXME: This is somehow weird, but switch/case isn't typedef.
+			var name = '';
+			if (mod === ctrlAltShift) {
+				name = 'ctrl-alt-shift-';
+			} else if (mod === ctrlAlt) {
+				name = 'ctrl-alt-';
+			} else if (mod === ctrlShift) {
+				name = 'ctrl-shift-';
+			} else if (mod === altShift) {
+				name = 'alt-shift-';
+			} else if (mod === glut.ACTIVE_CTRL) {
+				name = 'ctrl-';
+			} else if (mod === glut.ACTIVE_ALT) {
+				name = 'alt-';
+			} else if (mod === glut.ACTIVE_SHIFT) {
+				name = 'shift-';
+			}
+
+			name += this.KEYMAP[code].toLowerCase();
+
+
+			if (lychee.debug === true) {
+				console.log('lychee.Input:', this.KEYMAP[code], name, delta);
+			}
+
+
+			// allow both bind('key') and bind('ctrl-a')
+			this.trigger('key', [ this.KEYMAP[code], name, delta ]);
+			this.trigger(name, [ delta ]);
+
+
+			this.__last.key = Date.now();
 
 		},
 
