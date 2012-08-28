@@ -50,7 +50,7 @@ lychee.define('lychee.physics.Vector').exports(function(lychee, global) {
 
 		},
 
-		substract: function(vector) {
+		subtract: function(vector, copy) {
 
 			copy = copy === true ? true : false;
 
